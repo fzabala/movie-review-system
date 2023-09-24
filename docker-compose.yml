@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  scc_db:
+    container_name: scc_db
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=/data/postgres
+
+  scc_app:
+    container_name: scc_app
+    build: .
+    env_file: .env
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - DB_HOSTNAME=${DB_HOSTNAME}
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DIALECT=${DB_DIALECT}
+      - DB_STORAGE=${DB_STORAGE}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - scc_db
+    command: npm run dev
